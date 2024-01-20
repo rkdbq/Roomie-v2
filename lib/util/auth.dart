@@ -30,7 +30,6 @@ class Auth {
         email: email,
         password: password,
       );
-      var verified = FirebaseAuth.instance.currentUser!.emailVerified;
       // if (!verified) {
       //   FirebaseAuth.instance.currentUser!.sendEmailVerification();
       //   return '학교 계정 인증을 완료해주세요.';
@@ -69,7 +68,8 @@ class Auth {
           content: Text(failMessage),
           actions: <Widget>[
             TextButton(
-              onPressed: () => Navigator.pop(context, consts['close'].toString()),
+              onPressed: () =>
+                  Navigator.pop(context, consts['close'].toString()),
               child: Text(consts['close'].toString()),
             ),
           ],

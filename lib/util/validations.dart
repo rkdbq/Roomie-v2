@@ -11,6 +11,13 @@ class Validations {
     return null;
   }
 
+  static String? validateEtc(String? value) {
+    if (value == null || value.isEmpty)
+      return surveyHintTexts['etc'].toString();
+    if (value.length > 50) return consts['less-than-fifty'].toString();
+    return null;
+  }
+
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty)
       return consts['write-university-email'].toString();
@@ -27,7 +34,17 @@ class Validations {
 
   static String? validatePassword(String? value) {
     if (value == null || value.isEmpty || value.length < 6)
-      return consts['invalid-password-format'].toString();
+      return consts['short-password-format'].toString();
+
+    if (!value.contains(RegExp(r'[A-Z]')) ||
+        !value.contains(RegExp(r'[a-z]'))) {
+      return consts['uppercase-password-format'].toString();
+    }
+
+    if (!value.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'))) {
+      return consts['special-char-password-format'].toString();
+    }
+
     return null;
   }
 }

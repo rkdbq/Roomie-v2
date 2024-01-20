@@ -52,9 +52,9 @@ class _LoginState extends State<Login> {
           authMessage = await auth.sendPasswordResetEmail(email);
           break;
       }
-      if (authMessage != 'verified')
+      if (authMessage != 'verified') {
         auth.showAuthDialog(context, authMessage);
-      else
+      } else
         switch (formMode) {
           case FormMode.REGISTER:
             FirebaseAuth.instance.currentUser!.sendEmailVerification();
@@ -249,14 +249,14 @@ class _LoginState extends State<Login> {
           children: [
             Expanded(
               child: Container(
-                width: formMode == FormMode.REGISTER
-                    ? screenWidth * 0.8
-                    : screenWidth * 0.8,
+                width: screenWidth * 0.8,
                 child: CustomTextField(
                   enabled: !loading,
                   hintText: consts['university-email'].toString(),
                   textInputAction: TextInputAction.next,
-                  validateFunction: Validations.validateEmail,
+                  validateFunction: formMode == FormMode.REGISTER
+                      ? Validations.validateEmail
+                      : null,
                   onChange: (String? val) {
                     email = val ?? '';
                   },
@@ -275,7 +275,9 @@ class _LoginState extends State<Login> {
                 enabled: !loading,
                 hintText: consts['password'].toString(),
                 textInputAction: TextInputAction.done,
-                validateFunction: Validations.validatePassword,
+                validateFunction: formMode == FormMode.REGISTER
+                    ? Validations.validatePassword
+                    : null,
                 submitAction: login,
                 obscureText: true,
                 onSaved: (String? val) {
@@ -294,6 +296,7 @@ class _LoginState extends State<Login> {
     return loading
         ? Center(child: CircularProgressIndicator())
         : CustomButton(
+            width: MediaQuery.of(context).size.width,
             label: formMode == FormMode.LOGIN
                 ? consts['login'].toString()
                 : (formMode == FormMode.REGISTER

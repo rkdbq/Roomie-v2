@@ -6,6 +6,7 @@ import 'package:social_app_ui/util/configs/configs.dart';
 import 'package:social_app_ui/util/data.dart';
 import 'package:social_app_ui/util/enum.dart';
 import 'package:social_app_ui/util/user.dart';
+import 'package:social_app_ui/util/validations.dart';
 import 'package:social_app_ui/views/widgets/custom_text_field.dart';
 
 class Detail extends StatefulWidget {
@@ -24,10 +25,8 @@ class Detail extends StatefulWidget {
 class _DetailState extends State<Detail> {
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
     List<String> details = List.from(essentialHintTexts.keys)
       ..addAll(surveyHintTexts.keys);
-    details.add('etc');
 
     var meanSurveys = widget.user.calculateMeanRoommateSurveys();
 
@@ -90,8 +89,8 @@ class _DetailState extends State<Detail> {
               );
             } else if (surveyMaps[key]!.length == 2) {
               return Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
+                // mainAxisAlignment: MainAxisAlignment.center,
+                // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(detailHintTexts[key]!),
                   SizedBox(
@@ -149,13 +148,13 @@ class _DetailState extends State<Detail> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                      // mainAxisAlignment: MainAxisAlignment.start,
+                      // crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
                           flex: 1,
                           child: Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: Text(detailHintTexts[key]!,
                                 style: TextStyle(
                                     color: Color.fromRGBO(0, 0, 0, 0.8),
@@ -175,10 +174,7 @@ class _DetailState extends State<Detail> {
                         Expanded(
                           flex: 3,
                           child: Align(
-                            alignment: widget.detailMode != Owner.OTHERS &&
-                                    !variables['auth']
-                                ? Alignment.centerLeft
-                                : Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: DropdownButton(
                               value: widget.user.essentials[key],
                               items:
@@ -260,7 +256,7 @@ class _DetailState extends State<Detail> {
                         Expanded(
                           flex: 1,
                           child: Align(
-                            alignment: Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: Text(detailHintTexts[key]!,
                                 style: TextStyle(
                                     color: Color.fromRGBO(0, 0, 0, 0.8),
@@ -280,10 +276,7 @@ class _DetailState extends State<Detail> {
                         Expanded(
                           flex: 3,
                           child: Align(
-                            alignment: widget.detailMode != Owner.OTHERS &&
-                                    !variables['auth']
-                                ? Alignment.centerLeft
-                                : Alignment.center,
+                            alignment: Alignment.centerLeft,
                             child: Text(value,
                                 style: TextStyle(
                                     fontSize: 16,
@@ -305,21 +298,27 @@ class _DetailState extends State<Detail> {
                 SizedBox(
                   height: 10,
                 ),
-                CustomTextField(
-                  enabled:
-                      widget.detailMode != Owner.OTHERS && !variables['auth'],
-                  initialValue: widget.user.surveys[key],
-                  onChange: (text) {
-                    usersColRef
-                        .doc(widget.user.email)
-                        .update({'surveys.etc': text});
-                    showToast(
-                      consts['saved'].toString(),
-                      context: context,
-                      animation: StyledToastAnimation.fade,
-                    );
-                    setState(() {});
-                  },
+                Form(
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                  child: CustomTextField(
+                    validateFunction: Validations.validateEtc,
+                    enabled:
+                        widget.detailMode != Owner.OTHERS && !variables['auth'],
+                    initialValue: widget.user.surveys[key],
+                    onChange: (text) {
+                      if (text!.length > 0 && text.length <= 50) {
+                        usersColRef
+                            .doc(widget.user.email)
+                            .update({'surveys.etc': text});
+                        showToast(
+                          consts['saved'].toString(),
+                          context: context,
+                          animation: StyledToastAnimation.fade,
+                        );
+                        setState(() {});
+                      }
+                    },
+                  ),
                 ),
                 SizedBox(
                   height: 50,
