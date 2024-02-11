@@ -15,8 +15,8 @@ import '../screens/details/detail.dart';
 
 class ProfileCard extends StatelessWidget {
   final Owner profileMode;
-  final User user;
-  User me;
+  final MyUser user;
+  MyUser me;
   final List<String> highest, lowest;
   ProfileCard({
     super.key,
@@ -408,7 +408,7 @@ class ProfileCard extends StatelessWidget {
                           onPressed: () {
                             Navigate.pushPage(
                               context,
-                              OtherProfile(other: user),
+                              OtherProfile(other: user, me: me),
                             );
                           },
                         ),
